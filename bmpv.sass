@@ -1,0 +1,143 @@
+$_bmpv_variables: ()
+$_bmpv_element: null
+$_bmpv_block: ''
+$_bmpv_mods: null
+$b: 'Unknown'
+
+
+$_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z" "!" "#" "$" "%" "&" "'" "(" ")" "*" "+" "," "-" "." "/" "[" "\\" "]" "^" "_" "{" "|" "}" "~" ":" !default
+@function _bmpv_strCompare($a, $b, $order)
+  @if type-of($a) == "number" and type-of($b) == "number"
+    @return $a < $b
+  $a: to-lower-case($a + unquote(""))
+  $b: to-lower-case($b + unquote(""))
+  @for $i from 1 through min(str-length($a), str-length($b))
+    $char-a: str-slice($a, $i, $i)
+    $char-b: str-slice($b, $i, $i)
+    @if $char-a and $char-b and index($order, $char-a) != index($order, $char-b)
+      @return index($order, $char-a) < index($order, $char-b)
+  @return str-length($a) < str-length($b)
+@function _bmpv_quickSort($list, $order: $_bmpv_defaultOrder)
+  $less: ()
+  $equal: ()
+  $large: ()
+  @if length($list) > 1
+    $seed: nth($list, ceil(length($list) / 2))
+    @each $item in $list
+      @if $item == $seed
+        $equal: append($equal, $item, list-separator($list))
+      @else if _bmpv_strCompare($item, $seed, $order)
+        $less: append($less, $item, list-separator($list))
+      @else if not _bmpv_strCompare($item, $seed, $order)
+        $large: append($large, $item, list-separator($list))
+    @return join(join(_bmpv_quickSort($less, $order), $equal), _bmpv_quickSort($large, $order))
+  @return $list
+
+@function _bmpv_purge($list)
+  $result: ()
+  @each $item in $list 
+    @if $item != null and $item != false and $item != ''
+      @if not index($result, $item)
+        $result: append($result, $item)
+  @if length($result) > 1 
+    @return _bmpv_quickSort($result)
+  @return $result
+
+
+@function _bmpv_selectorFull()
+  $sel: ''
+  @each $mo in $_bmpv_mods
+    @if $mo
+      $first: str-slice($mo, 1, 1)
+      @if $first == '-'
+        $sel: #{$sel + '.' + $mo}
+      @else if $first == '\\' and str-slice($mo, 1, 2) == '\\:'
+        $sel: #{$sel + str-slice($mo, 2)}
+      @else if $first == ':'
+        $sel: #{$sel + $mo}
+      @else
+        $sel: #{$sel + _bmpv_elm() + '--' + $mo}
+      
+  @if $sel == ''
+    @return _bmpv_elm()
+  @return $sel
+
+@function _bmpv_elm()
+  $_elm: #{'.' + $_bmpv_block}
+  @if $_bmpv_element == null or $_bmpv_element == ''
+    @return $_elm
+  @return #{$_elm + '__' + $_bmpv_element}
+
+@function _bmpv_vget($name, $value: null)
+  $selector: _bmpv_selectorFull()
+  $map: map-get($_bmpv_variables, $selector)
+  @if $map == null
+    @return $value
+  @return map-get($map, $name)
+
+@function _bmpv_vsave($name, $value: null)
+  $selector: _bmpv_selectorFull()
+  $map: map-get($_bmpv_variables, $selector)
+  @if $map == null
+    $map: ($name: $value)
+  @else
+    $map: map-merge($map, ($name: $value))
+  $_bmpv_variables: map-merge($_bmpv_variables, ($selector: $map)) !global
+  @return $value
+
+@function v($name, $value: null)
+  $selector: _bmpv_selectorFull()
+  $map: map-get($_bmpv_variables, $selector)
+  @if $map == null
+    $map: ()
+  $v: map-get($map, $name)
+  @if $v != null
+    @return $v
+  @if $value != null
+    $map: map-merge($map, ($name: $value))
+    $_bmpv_variables: map-merge($_bmpv_variables, ($selector: $map)) !global
+  @return $value
+  
+=b($name: '', $mods: null)
+  $_stack_element: $_bmpv_element
+  $_stack_block: $_bmpv_block
+  $_stack_mods: $_bmpv_mods
+  @if $_bmpv_block == null or $_bmpv_block == ''
+    $_bmpv_block: $b !global
+  @if $mods != null
+    $_bmpv_mods: _bmpv_purge(join($_bmpv_mods, $mods)) !global
+  $_bmpv_element: $name !global
+  @at-root #{_bmpv_selectorFull()}
+    @content
+  $_bmpv_element: $_stack_element !global
+  $_bmpv_block: $_stack_block !global
+  $_bmpv_mods: $_stack_mods !global
+
+=m($mods: null)
+  $_stack_mods: $_bmpv_mods
+  $_bmpv_mods: _bmpv_purge(join($_bmpv_mods, $mods)) !global
+  @at-root 
+    #{_bmpv_selectorFull()}
+      @content
+  $_bmpv_mods: $_stack_mods !global
+
+=p($name, $value: null)
+  @if $value != null 
+    #{$name}: _bmpv_vget($name, $value)
+
+=v($name, $value: null)
+  $x: #{_bmpv_vsave($name, $value)}
+
+=bmv($block: null)
+  $_stack_block: $_bmpv_block
+  $_bmpv_block: $block !global
+  @content
+  $_bmpv_block: $_stack_block !global
+  
+=bmp($block: null)
+  $_stack_block: $_bmpv_block
+  $_bmpv_block: $block !global
+  @at-root #{_bmpv_selectorFull()}
+    @content
+  $_bmpv_block: $_stack_block !global
+

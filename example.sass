@@ -1,0 +1,37 @@
+@import ./bmpv.sass
+
++bmv(BpInput)
+  +b(Label)
+    +m(focus)
+      +v(color, #0f8)
+    +m(mode-on)
+      +v(color, #222)
+
+
++bmp(BpInput)
+  +b('', sss)
+    color: #f21
+  +b(Label)
+    color: #f00
+    +m(hover)
+      color: #0f0
+    +m(focus)
+      +p(color, #0f0)
+    +m(mode-on)
+      color: v(color, #000)
+      +m(hover)
+        color: #0ff
+      +m(focus)
+        color: #ff0
+
++b(Icon)
+  width: 24px
+   
+
+$b: BpForm
+
++b(Row)
+  color: #333
+  padding: 10px 0
+
+
