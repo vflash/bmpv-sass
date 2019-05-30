@@ -106,7 +106,7 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   @return $value
 
 @function _bmpv_vgetset($name, $value: null)
-  $selector: _bmpv_selectorFull()
+  $selector: _bmpv_getSelectorValue($name)
   $map: map-get($_bmpv_variables, $selector)
   @if $map == null
     $map: ()
@@ -143,6 +143,10 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $_bmpv_block: $_stack_block !global
   $_bmpv_mods: $_stack_mods !global
 
+=block($name: null, $mods: null)
+  +b($name, $mods)
+    @content
+  
 =m($mods: null)
   $_stack_mods: $_bmpv_mods
   $_bmpv_mods: _bmpv_purge(join($_bmpv_mods, $mods)) !global
@@ -162,9 +166,13 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
     +_bmpv_set_css_var($name, $value)
 
 @function v($name, $value: null)
+  @if $name == null or $name == &
+    @return _bmpv_vget('' + &, $value)
   @if str-slice($name, 1, 2) == '--'
     $value: _bmpv_vget($name, $value)
-    @return #{'var(--' + $_bmpv_block + $name + ', ' $value ')'}
+    @if $value != null
+      @return #{'var(--' + $_bmpv_block + $name + ', ' + $value + ')'}
+    @return #{'var(--' + $_bmpv_block + $name + ')'}
   @else
     @return _bmpv_vget($name, $value)
 
