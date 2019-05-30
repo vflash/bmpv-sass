@@ -26,7 +26,18 @@
 
 +b(Icon)
   width: 24px
-   
+
++bmp(BpForm)
+  +v(--width, 144px)
+  +b(Label)
+    +v(-color, #f00)
+    +m(focus)
+      +p(color, v(-color, #000))
+      +p(width, v(--width, 44px))
+      height: v(--height, 66px)
+
+  +b(Label)
+
 
 $b: BpForm
 
