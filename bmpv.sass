@@ -1,7 +1,8 @@
 $_bmpv_modeSettings: false
+$_bmpv_config_vars: false
 $_bmpv_variables: ()
 $_bmpv_element: null
-$_bmpv_block: ''
+$_bmpv_block: null
 $_bmpv_mods: null
 $b: 'Unknown'
 
@@ -70,19 +71,26 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   @return #{$_elm + '__' + $_bmpv_element}
 
 @function _bmpv_getSelectorValue($name: null)
-  @if str-slice($name, 1, 1) == '-'
+  $char: str-slice($name, 1, 1)
+  @if $char == '-'
     @if str-slice($name, 1, 2) == '--'
       @return '.' + $_bmpv_block
     @else
       @return _bmpv_elm()
+  @if $char == '#'
+    @return &
   @else
-    @return _bmpv_selectorFull()
+    @if length($_bmpv_mods) > 1
+      @return _bmpv_selectorFull()
+    @return &
 
 @function _bmpv_vhas($name, $value: null)
   $selector: _bmpv_getSelectorValue($name)
   $map: map-get($_bmpv_variables, $selector)
   @if $map == null
     @return false
+  @if str-slice($name, 1, 1) == '#'
+    $name: str-slice($name, 2)
   @return map-get($map, $name) != null
 
 @function _bmpv_vget($name, $value: null)
@@ -90,6 +98,8 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $map: map-get($_bmpv_variables, $selector)
   @if $map == null
     @return $value
+  @if str-slice($name, 1, 1) == '#'
+    $name: str-slice($name, 2)
   $v: map-get($map, $name)
   @if $v != null
     @return $v
@@ -98,6 +108,8 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
 @function _bmpv_vset($name, $value: null)
   $selector: _bmpv_getSelectorValue($name)
   $map: map-get($_bmpv_variables, $selector)
+  @if str-slice($name, 1, 1) == '#'
+    $name: str-slice($name, 2)
   @if $map == null
     $map: ($name: $value)
   @else
@@ -108,6 +120,8 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
 @function _bmpv_vgetset($name, $value: null)
   $selector: _bmpv_getSelectorValue($name)
   $map: map-get($_bmpv_variables, $selector)
+  @if str-slice($name, 1, 1) == '#'
+    $name: str-slice($name, 2)
   @if $map == null
     $map: ()
   $v: map-get($map, $name)
@@ -119,7 +133,7 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   @return $value
 
 =_bmpv_set_css_var($name, $value)
-  @if str-slice($name, 1, 2) == '--'
+  @if $_bmpv_config_vars and str-slice($name, 1, 2) == '--'
     @if $_bmpv_element or length($_bmpv_mods) > 0
       @at-root
         #{'.' + $_bmpv_block}
@@ -132,11 +146,12 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $_stack_element: $_bmpv_element
   $_stack_block: $_bmpv_block
   $_stack_mods: $_bmpv_mods
-  @if $_bmpv_block == null or $_bmpv_block == ''
+  @if $_bmpv_block == null
     $_bmpv_block: $b !global
   @if $mods != null
     $_bmpv_mods: _bmpv_purge(join($_bmpv_mods, $mods)) !global
-  $_bmpv_element: $name !global
+  @if $name != ''
+    $_bmpv_element: $name !global
   @at-root #{_bmpv_selectorFull()}
     @content
   $_bmpv_element: $_stack_element !global
@@ -158,12 +173,17 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
 =p($name, $value: null)
   $value: #{_bmpv_vgetset($name, $value)}
   @if $value != null
+    @if str-slice($name, 1, 1) == '#'
+      $name: str-slice($name, 2)
     #{$name}: $value
 
 =v($name, $value: null)
+  $_stack_block: $_bmpv_block
+  @if $_bmpv_block == null
+    $_bmpv_block: $b !global
   $value: #{_bmpv_vgetset($name, $value)}
-  @if $value != null
-    +_bmpv_set_css_var($name, $value)
+  +_bmpv_set_css_var($name, $value)
+  $_bmpv_block: $_stack_block !global
 
 @function v($name, $value: null)
   @if $name == null or $name == &
@@ -179,9 +199,12 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
 
 
 =bmv($block: null)
+  $_bmpv_config_vars: true !global
   $_stack_block: $_bmpv_block
   $_bmpv_block: $block !global
-  @content
+  @at-root #{_bmpv_selectorFull()}
+    @content
+  $_bmpv_config_vars: false !global
   $_bmpv_block: $_stack_block !global
 
 =bmp($block: null)
