@@ -1,5 +1,3 @@
-$_bmpv_modeSettings: false
-$_bmpv_config_vars: false
 $_bmpv_variables: ()
 $_bmpv_element: null
 $_bmpv_block: null
@@ -42,11 +40,14 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
       @if not index($result, $item)
         $result: append($result, $item)
   @if length($result) > 1
+    $i: index($result, '[class]')
+    @if $i !=null and $i >= 1
+      $result: #{set-nth($result, $i, null)}
     @return _bmpv_quickSort($result)
   @return $result
 
 
-@function _bmpv_selectorFull()
+@function _bmpv_selectorMake()
   $sel: ''
   @each $mo in $_bmpv_mods
     @if $mo
@@ -64,8 +65,8 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
     @return _bmpv_elm()
   @return $sel
 
-@function _bmpv_elm($pp: '.')
-  $_elm: #{$pp + $_bmpv_block}
+@function _bmpv_elm()
+  $_elm: #{'.' + $_bmpv_block}
   @if $_bmpv_element == null or $_bmpv_element == ''
     @return $_elm
   @return #{$_elm + '__' + $_bmpv_element}
@@ -75,14 +76,15 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   @if $char == '-'
     @if str-slice($name, 1, 2) == '--'
       @return '.' + $_bmpv_block
-    @else
-      @return _bmpv_elm()
+    @return _bmpv_elm()
   @if $char == '#'
     @return &
-  @else
-    @if length($_bmpv_mods) > 1
-      @return _bmpv_selectorFull()
-    @return &
+  // ----------- selector self --------------
+  $result: ()
+  @each $se in nth(selector-parse(&), 1)
+    $aa: selector-append(_bmpv_purge(simple-selectors($se))...)
+    $result: append($result, $aa)
+  @return $result
 
 @function _bmpv_vhas($name, $value: null)
   $selector: _bmpv_getSelectorValue($name)
@@ -132,15 +134,9 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
     $_bmpv_variables: map-merge($_bmpv_variables, ($selector: $map)) !global
   @return $value
 
-=_bmpv_set_css_var($name, $value)
-  @if $_bmpv_config_vars and str-slice($name, 1, 2) == '--'
-    @if $_bmpv_element or length($_bmpv_mods) > 0
-      @at-root
-        #{'.' + $_bmpv_block}
-          #{'--' + $_bmpv_block + $name}: $value
-    @else
-      #{'--' + $_bmpv_block + $name}: $value
-
+=block($name: null, $mods: null)
+  +b($name, $mods)
+    @content
 
 =b($name: '', $mods: null)
   $_stack_element: $_bmpv_element
@@ -152,21 +148,17 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
     $_bmpv_mods: _bmpv_purge(join($_bmpv_mods, $mods)) !global
   @if $name != ''
     $_bmpv_element: $name !global
-  @at-root #{_bmpv_selectorFull()}
+  @at-root #{_bmpv_selectorMake()}
     @content
   $_bmpv_element: $_stack_element !global
   $_bmpv_block: $_stack_block !global
   $_bmpv_mods: $_stack_mods !global
 
-=block($name: null, $mods: null)
-  +b($name, $mods)
-    @content
-  
 =m($mods: null)
   $_stack_mods: $_bmpv_mods
   $_bmpv_mods: _bmpv_purge(join($_bmpv_mods, $mods)) !global
   @at-root
-    #{_bmpv_selectorFull()}
+    #{_bmpv_selectorMake()}
       @content
   $_bmpv_mods: $_stack_mods !global
 
@@ -182,7 +174,6 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   @if $_bmpv_block == null
     $_bmpv_block: $b !global
   $value: #{_bmpv_vgetset($name, $value)}
-  +_bmpv_set_css_var($name, $value)
   $_bmpv_block: $_stack_block !global
 
 @function v($name, $value: null)
@@ -196,21 +187,24 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   @else
     @return _bmpv_vget($name, $value)
 
-
+@function b($name: '')
+  @if $_bmpv_block == null
+    $_bmpv_block: $b
+  @if $name == ''
+    @return #{$_bmpv_block}
+  @return #{$_bmpv_block}__#{$name}
 
 =bmv($block: null)
-  $_bmpv_config_vars: true !global
   $_stack_block: $_bmpv_block
   $_bmpv_block: $block !global
-  @at-root #{_bmpv_selectorFull()}
+  @at-root #{_bmpv_selectorMake()}
     @content
-  $_bmpv_config_vars: false !global
   $_bmpv_block: $_stack_block !global
 
 =bmp($block: null)
   $_stack_block: $_bmpv_block
   $_bmpv_block: $block !global
-  @at-root #{_bmpv_selectorFull()}
+  @at-root #{_bmpv_selectorMake()}
     @content
   $_bmpv_block: $_stack_block !global
 
