@@ -1,0 +1,29 @@
+{
+    "version": "0.1.0",
+    "name": "bmpv-sass",
+    "description": "sass bem class-name generator",
+    "keywords": [
+        "className",
+        "sass",
+        "bem"
+    ],
+    "main": "./bmpv-sass.sass",
+    "homepage": "https://github.com/vflash/bmpv-sass",
+    "bugs": {
+        "url": "https://github.com/vflash/bmpv-sass/issues"
+    },
+    "author": {
+        "name": "Vopilovskiy Konstantin",
+        "email": "flash.vkv@gmail.com",
+        "url": "http://vflash.ru"
+    },
+    "files": [
+        "LICENSE",
+        "README.md",
+        "bmpv-sass.sass"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/vflash/bmpv-sass.git"
+    }
+}
