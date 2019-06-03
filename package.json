@@ -1,5 +1,5 @@
 {
-    "version": "0.1.0",
+    "version": "0.1.1",
     "name": "bmpv-sass",
     "description": "sass bem class-name generator",
     "keywords": [
@@ -7,7 +7,7 @@
         "sass",
         "bem"
     ],
-    "main": "./bmpv-sass.sass",
+    "main": "./bmpv.sass",
     "homepage": "https://github.com/vflash/bmpv-sass",
     "bugs": {
         "url": "https://github.com/vflash/bmpv-sass/issues"
@@ -20,7 +20,7 @@
     "files": [
         "LICENSE",
         "README.md",
-        "bmpv-sass.sass"
+        "bmpv.sass"
     ],
     "repository": {
         "type": "git",
