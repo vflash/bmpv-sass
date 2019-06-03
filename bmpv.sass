@@ -2,7 +2,6 @@ $_bmpv_variables: ()
 $_bmpv_element: null
 $_bmpv_block: null
 $_bmpv_mods: null
-$b: 'Unknown'
 
 
 $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z" "!" "#" "$" "%" "&" "'" "(" ")" "*" "+" "," "-" "." "/" "[" "\\" "]" "^" "_" "{" "|" "}" "~" ":" !default
@@ -75,7 +74,10 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $char: str-slice($name, 1, 1)
   @if $char == '-'
     @if str-slice($name, 1, 2) == '--'
-      @return '.' + $_bmpv_block
+      $block: $_bmpv_block
+      @if $block == null
+        $block: $b
+      @return #{'.' + $block}
     @return _bmpv_elm()
   @if $char == '#'
     @return &
@@ -134,6 +136,25 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
     $_bmpv_variables: map-merge($_bmpv_variables, ($selector: $map)) !global
   @return $value
 
+
+@function v($name, $value: null)
+  @if str-slice($name, 1, 2) == '--'
+    $value: _bmpv_vget($name, $value)
+    @if $value != null
+      @return #{'var(--' + $_bmpv_block + $name + ', ' + $value + ')'}
+    @return #{'var(--' + $_bmpv_block + $name + ')'}
+  @else
+    @return _bmpv_vget($name, $value)
+
+@function b($elem: '')
+  $block: $_bmpv_block
+  @if $block == null
+    $block: $b
+  @if $elem != ''
+    @return #{$block}__#{$elem}
+  @return #{$block}
+
+
 =block($name: null, $mods: null)
   +b($name, $mods)
     @content
@@ -173,35 +194,10 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $_stack_block: $_bmpv_block
   @if $_bmpv_block == null
     $_bmpv_block: $b !global
-  $value: #{_bmpv_vgetset($name, $value)}
+  $value: #{_bmpv_vset($name, $value)}
   $_bmpv_block: $_stack_block !global
 
-@function v($name, $value: null)
-  @if $name == null or $name == &
-    @return _bmpv_vget('' + &, $value)
-  @if str-slice($name, 1, 2) == '--'
-    $value: _bmpv_vget($name, $value)
-    @if $value != null
-      @return #{'var(--' + $_bmpv_block + $name + ', ' + $value + ')'}
-    @return #{'var(--' + $_bmpv_block + $name + ')'}
-  @else
-    @return _bmpv_vget($name, $value)
-
-@function b($name: '')
-  @if $_bmpv_block == null
-    $_bmpv_block: $b
-  @if $name == ''
-    @return #{$_bmpv_block}
-  @return #{$_bmpv_block}__#{$name}
-
-=bmv($block: null)
-  $_stack_block: $_bmpv_block
-  $_bmpv_block: $block !global
-  @at-root #{_bmpv_selectorMake()}
-    @content
-  $_bmpv_block: $_stack_block !global
-
-=bmp($block: null)
+=bmpv($block: null)
   $_stack_block: $_bmpv_block
   $_bmpv_block: $block !global
   @at-root #{_bmpv_selectorMake()}
