@@ -139,12 +139,12 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
 
 @function v($name, $value: null)
   @if str-slice($name, 1, 2) == '--'
-    $value: _bmpv_vget($name, $value)
+    $value: _bmpv_vgetset($name, $value)
     @if $value != null
       @return #{'var(--' + $_bmpv_block + $name + ', ' + $value + ')'}
     @return #{'var(--' + $_bmpv_block + $name + ')'}
   @else
-    @return _bmpv_vget($name, $value)
+    @return _bmpv_vgetset($name, $value)
 
 @function b($elem: '')
   $block: $_bmpv_block
@@ -194,7 +194,7 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $_stack_block: $_bmpv_block
   @if $_bmpv_block == null
     $_bmpv_block: $b !global
-  $value: #{_bmpv_vset($name, $value)}
+  $value: #{_bmpv_vgetset($name, $value)}
   $_bmpv_block: $_stack_block !global
 
 =bmpv($block: null)
