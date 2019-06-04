@@ -1,3 +1,4 @@
+$_bmpv_mode_config: false
 $_bmpv_variables: ()
 $_bmpv_element: null
 $_bmpv_block: null
@@ -185,10 +186,11 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
 
 =p($name, $value: null)
   $value: #{_bmpv_vgetset($name, $value)}
-  @if $value != null
-    @if str-slice($name, 1, 1) == '#'
-      $name: str-slice($name, 2)
-    #{$name}: $value
+  @if not $_bmpv_mode_config
+    @if $value != null
+      @if str-slice($name, 1, 1) == '#'
+        $name: str-slice($name, 2)
+      #{$name}: $value
 
 =v($name, $value: null)
   $_stack_block: $_bmpv_block
@@ -196,6 +198,14 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
     $_bmpv_block: $b !global
   $value: #{_bmpv_vgetset($name, $value)}
   $_bmpv_block: $_stack_block !global
+
+=bmpv-config($block: null)
+  $_stack: $_bmpv_mode_config
+  $_bmpv_mode_config: true !global
+  +bmpv($block)
+    @content
+  $_bmpv_mode_config: $_stack !global
+
 
 =bmpv($block: null)
   $_stack_block: $_bmpv_block
