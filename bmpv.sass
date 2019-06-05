@@ -1,4 +1,5 @@
 $_bmpv_mode_config: false
+$_bmpv_is_cascade: true
 $_bmpv_variables: ()
 $_bmpv_element: null
 $_bmpv_block: null
@@ -46,7 +47,6 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
     @return _bmpv_quickSort($result)
   @return $result
 
-
 @function _bmpv_selectorMake()
   $sel: ''
   @each $mo in $_bmpv_mods
@@ -60,7 +60,6 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
         $sel: #{$sel + $mo}
       @else
         $sel: #{$sel + _bmpv_elm() + '--' + $mo}
-
   @if $sel == ''
     @return _bmpv_elm()
   @return $sel
@@ -160,28 +159,47 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   +b($name, $mods)
     @content
 
-=b($name: '', $mods: null)
+=b($name: null, $mods: null)
   $_stack_element: $_bmpv_element
   $_stack_block: $_bmpv_block
   $_stack_mods: $_bmpv_mods
+
+  @if $name == ''
+    $name: null
+  $_bmpv_element: $name !global
+  @if $_bmpv_is_cascade
+    $_bmpv_mods: null !global
   @if $_bmpv_block == null
     $_bmpv_block: $b !global
   @if $mods != null
     $_bmpv_mods: _bmpv_purge(join($_bmpv_mods, $mods)) !global
-  @if $name != ''
-    $_bmpv_element: $name !global
-  @at-root #{_bmpv_selectorMake()}
-    @content
+
+  @if $_bmpv_is_cascade
+    #{_bmpv_selectorMake()}
+      @content
+  @else
+    @at-root #{_bmpv_selectorMake()}
+      @content
   $_bmpv_element: $_stack_element !global
   $_bmpv_block: $_stack_block !global
   $_bmpv_mods: $_stack_mods !global
 
+=e($name: null, $mods: null)
+  $_stack_is_cascade: $_bmpv_is_cascade
+  $_bmpv_is_cascade: false !global
+  +b($name, $mods)
+    $_bmpv_is_cascade: $_stack_is_cascade !global
+    @content
+
 =m($mods: null)
   $_stack_mods: $_bmpv_mods
   $_bmpv_mods: _bmpv_purge(join($_bmpv_mods, $mods)) !global
-  @at-root
-    #{_bmpv_selectorMake()}
-      @content
+  @if $_bmpv_element or $_bmpv_block
+    @at-root
+      #{_bmpv_selectorMake()}
+        @content
+  @else
+    @content
   $_bmpv_mods: $_stack_mods !global
 
 =p($name, $value: null)
@@ -199,7 +217,7 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $value: #{_bmpv_vgetset($name, $value)}
   $_bmpv_block: $_stack_block !global
 
-=bmpv-config($block: null)
+=bmpv-config($block: null, $is_cascade: false)
   $_stack: $_bmpv_mode_config
   $_bmpv_mode_config: true !global
   +bmpv($block)
@@ -207,10 +225,13 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $_bmpv_mode_config: $_stack !global
 
 
-=bmpv($block: null)
+=bmpv($block: null, $is_cascade: false)
+  $_stack_is_cascade: $_bmpv_is_cascade
   $_stack_block: $_bmpv_block
+  $_bmpv_is_cascade: $is_cascade !global
   $_bmpv_block: $block !global
   @at-root #{_bmpv_selectorMake()}
     @content
+  $_bmpv_is_cascade: $_stack_is_cascade !global
   $_bmpv_block: $_stack_block !global
 
