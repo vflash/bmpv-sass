@@ -220,7 +220,7 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
 =bmpv-config($block: null, $is_cascade: false)
   $_stack: $_bmpv_mode_config
   $_bmpv_mode_config: true !global
-  +bmpv($block)
+  +bmpv($block, $is_cascade)
     @content
   $_bmpv_mode_config: $_stack !global
 
