@@ -48,6 +48,7 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   @return $result
 
 @function _bmpv_selectorMake()
+  $elementHas: false
   $sel: ''
   @each $mo in $_bmpv_mods
     @if $mo
@@ -59,10 +60,13 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
       @else if $first == ':'
         $sel: #{$sel + $mo}
       @else
+        $elementHas: true
         $sel: #{$sel + _bmpv_elm() + '--' + $mo}
   @if $sel == ''
     @return _bmpv_elm()
-  @return $sel
+  @if $elementHas
+    @return $sel
+  @return _bmpv_elm() + $sel
 
 @function _bmpv_elm()
   $_elm: #{'.' + $_bmpv_block}
@@ -218,6 +222,8 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $_bmpv_block: $_stack_block !global
 
 =bmpv-config($block: null, $is_cascade: false)
+  @if $block == null
+    $block: $b
   $_stack: $_bmpv_mode_config
   $_bmpv_mode_config: true !global
   +bmpv($block, $is_cascade)
