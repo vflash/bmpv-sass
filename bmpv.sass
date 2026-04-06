@@ -145,7 +145,10 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   @if str-slice($name, 1, 2) == '--'
     $value: _bmpv_vgetset($name, $value)
     @if $value != null
-      @return #{'var(--' + $_bmpv_block + $name + ', ' + $value + ')'}
+      $fallback: ""
+      @if inspect($value) != "()" and $value != null
+        $fallback: ", #{$value}"
+      @return #{"var(--#{$_bmpv_block}#{$name}#{$fallback})"}
     @return #{'var(--' + $_bmpv_block + $name + ')'}
   @else
     @return _bmpv_vgetset($name, $value)
@@ -210,7 +213,8 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $_bmpv_mods: $_stack_mods !global
 
 =p($name, $value...)
-  $value: #{_bmpv_vgetset($name, $value)}
+  $res: _bmpv_vgetset($name, $value)
+  $value: if(inspect($res) == "()", "", #{$res})
   @if not $_bmpv_mode_config
     @if $value != null
       @if str-slice($name, 1, 1) == '#'
@@ -221,7 +225,8 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $_stack_block: $_bmpv_block
   @if $_bmpv_block == null
     $_bmpv_block: $b !global
-  $value: #{_bmpv_vgetset($name, $value)}
+  $res: _bmpv_vgetset($name, $value)
+  $value: if(inspect($res) == "()", "", #{$res})
   $_bmpv_block: $_stack_block !global
 
 =bmpv-config($block: null, $is_cascade: false)
