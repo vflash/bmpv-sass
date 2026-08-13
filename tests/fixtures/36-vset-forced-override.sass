@@ -1,0 +1,13 @@
+$b: Btn
+
++bmpv-config
+  +p(background, red)
+  +p(color, white)
+
+// Skin B хочет принудительно переопределить background
++bmpv-config
+  $x: _bmpv_vset(background, blue)
+
++block
+  +p(background, gray)
+  +p(color, black)

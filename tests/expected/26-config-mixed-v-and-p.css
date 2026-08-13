@@ -1,0 +1,7 @@
+.Widget {
+  color: var(--Widget--primary, #007bff);
+  background: var(--Widget--primary, #007bff);
+  padding: 16px;
+  border-radius: 8px;
+  margin: 20px;
+}

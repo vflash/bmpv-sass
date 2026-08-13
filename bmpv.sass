@@ -135,7 +135,7 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $v: map-get($map, $name)
   @if $v != null
     @return $v
-  @if $value != null
+  @if $value != null and length($value) > 0
     $map: map-merge($map, ($name: $value))
     $_bmpv_variables: map-merge($_bmpv_variables, ($selector: $map)) !global
   @return $value
@@ -216,7 +216,7 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
   $res: _bmpv_vgetset($name, $value)
   $value: if(inspect($res) == "()", "", #{$res})
   @if not $_bmpv_mode_config
-    @if $value != null
+    @if $value != null and $value != ''
       @if str-slice($name, 1, 1) == '#'
         $name: str-slice($name, 2)
       #{$name}: $value
@@ -248,4 +248,3 @@ $_bmpv_defaultOrder: "0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e"
     @content
   $_bmpv_is_cascade: $_stack_is_cascade !global
   $_bmpv_block: $_stack_block !global
-

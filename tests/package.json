@@ -1,0 +1,12 @@
+{
+  "name": "bmpv-sass-tests",
+  "version": "1.0.0",
+  "description": "Test suite for bmpv-sass library",
+  "scripts": {
+    "test": "node test-runner.js",
+    "test:verbose": "node test-runner.js --verbose"
+  },
+  "dependencies": {
+    "sass": "^1.99.0"
+  }
+}

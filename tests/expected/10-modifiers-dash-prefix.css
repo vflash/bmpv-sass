@@ -1,0 +1,6 @@
+.Input.-disabled {
+  opacity: 0.5;
+}
+.Input:focus {
+  outline: none;
+}

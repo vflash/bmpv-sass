@@ -1,0 +1,5 @@
+.Btn {
+  content: #fff;
+  content: red;
+  background: var(--Btn--bg, red);
+}

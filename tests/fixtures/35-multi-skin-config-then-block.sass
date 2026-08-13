@@ -1,0 +1,16 @@
+$b: Btn
+
+// skin A — задаёт значения
++bmpv-config
+  +p(background, red)
+  +p(color, white)
+
+// skin B — НЕ переопределяет (first-write-wins)
++bmpv-config
+  +p(background, blue)
+
+// единый код блока — повторяет каждое свойство
++block
+  +p(background, gray)
+  +p(color, black)
+  +p(padding, 10px)

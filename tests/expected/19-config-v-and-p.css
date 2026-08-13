@@ -1,0 +1,5 @@
+.Theme {
+  background: var(--Theme--primary-color, #007bff);
+  padding: var(--Theme--spacing, 8px);
+  color: var(--Theme--primary-color, #007bff);
+}

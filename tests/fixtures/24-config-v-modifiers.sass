@@ -1,0 +1,18 @@
+$b: Button
+
++bmpv-config
+  +v(--radius, 4px)
+  &.-primary
+    +v(--bg, #007bff)
+    +v(--color, white)
+  &.-secondary
+    +v(--bg, #6c757d)
+
++block
+  border-radius: v(--radius, 0)
+  &.-primary
+    background: v(--bg, red)
+    color: v(--color, black)
+  &.-secondary
+    background: v(--bg, green)
+    color: v(--color, black)

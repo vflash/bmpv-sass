@@ -1,0 +1,12 @@
+$b: Btn
+
+$before: _bmpv_vhas(--bg)
+
++bmpv-config
+  +v(--bg, red)
+
+$after: _bmpv_vhas(--bg)
+
++block
+  content: if($before, 'before-yes', 'before-no')
+  content: if($after, 'after-yes', 'after-no')

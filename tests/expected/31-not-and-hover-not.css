@@ -1,0 +1,6 @@
+.Btn.-active:not(.-disabled) {
+  background: red;
+}
+.Btn:hover:not(.-wait) {
+  opacity: 0.8;
+}

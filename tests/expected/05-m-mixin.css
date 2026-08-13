@@ -1,0 +1,6 @@
+.Button--primary {
+  background: blue;
+}
+.Button__Icon--large {
+  width: 32px;
+}

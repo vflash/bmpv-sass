@@ -1,0 +1,8 @@
+.Widget {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 10px;
+}
+.Widget:hover {
+  background-color: #2a2a2a;
+}

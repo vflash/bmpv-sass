@@ -1,0 +1,17 @@
+$b: Input
+
++bmpv-config
+  +v(--border-color, #ccc)
+  &:hover
+    +v(--border-color, #007bff)
+  &:focus
+    +v(--border-color, #007bff)
+    +v(--shadow, 0 0 0 2px rgba(0,123,255,0.25))
+
++block
+  border: 1px solid v(--border-color, #999)
+  &:hover
+    border-color: v(--border-color, #666)
+  &:focus
+    border-color: v(--border-color, #666)
+    box-shadow: v(--shadow, none)

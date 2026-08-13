@@ -1,0 +1,4 @@
+.Theme {
+  color: var(--Theme--color, #333);
+  padding: var(--Theme--spacing, 8px);
+}

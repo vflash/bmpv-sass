@@ -1,0 +1,13 @@
+$b: Btn
+
+$default: _bmpv_vget(--bg, #fff)
+
++bmpv-config
+  +v(--bg, red)
+
+$stored: _bmpv_vget(--bg, #fff)
+
++block
+  content: $default
+  content: $stored
+  background: v(--bg)

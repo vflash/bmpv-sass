@@ -1,0 +1,10 @@
+.Input {
+  border: 1px solid var(--Input--border-color, #ccc);
+}
+.Input:hover {
+  border-color: var(--Input--border-color, #ccc);
+}
+.Input:focus {
+  border-color: var(--Input--border-color, #ccc);
+  box-shadow: var(--Input--shadow, 0 0 0 2px rgba(0, 123, 255, 0.25));
+}

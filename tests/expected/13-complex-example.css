@@ -1,0 +1,18 @@
+.Nav {
+  background: #333;
+}
+.Nav__Item {
+  display: inline-block;
+}
+.Nav__Item--active {
+  font-weight: bold;
+}
+.Nav__Link {
+  color: white;
+}
+.Nav__Link--hover {
+  color: #ff0;
+}
+.Nav--dark {
+  background: #111;
+}

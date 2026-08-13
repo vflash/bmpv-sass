@@ -1,0 +1,10 @@
+.Input {
+  border: 1px solid #ccc;
+}
+.Input:hover:not(.-disabled) {
+  border-color: #007bff;
+}
+.Input.-focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}

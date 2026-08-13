@@ -1,0 +1,23 @@
+$b: Widget
+$skin: 'DARK'
+
+@if $skin == 'LIGHT'
+  +bmpv-config
+    +p(background-color, #fff)
+    +p(color, #000)
+    &:hover
+      +p(background-color, #f0f0f0)
+
+@if $skin == 'DARK'
+  +bmpv-config
+    +p(background-color, #1a1a1a)
+    +p(color, #fff)
+    &:hover
+      +p(background-color, #2a2a2a)
+
++block
+  +p(background-color, #888)
+  +p(color, #888)
+  +p(padding, 10px)
+  &:hover
+    +p(background-color, #666)

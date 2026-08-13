@@ -1,0 +1,11 @@
+.Button {
+  border-radius: 4px;
+}
+.Button.-primary {
+  background-color: #007bff;
+  color: white;
+}
+.Button.-secondary {
+  background-color: #6c757d;
+  color: white;
+}

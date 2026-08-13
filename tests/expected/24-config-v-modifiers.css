@@ -1,0 +1,11 @@
+.Button {
+  border-radius: var(--Button--radius, 4px);
+}
+.Button.-primary {
+  background: var(--Button--bg, #007bff);
+  color: var(--Button--color, white);
+}
+.Button.-secondary {
+  background: var(--Button--bg, #007bff);
+  color: var(--Button--color, white);
+}

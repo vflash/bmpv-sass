@@ -1,0 +1,16 @@
+$b: Form
+
++bmpv-config
+  +v(--input-bg, #fff)
+  +v(--input-border, #ccc)
+  &.-dark
+    +v(--input-bg, #1a1a1a)
+    +v(--input-border, #333)
+
++block
+  +v(--form-bg, #f5f5f5)
+  background: v(--form-bg)
+
+  +b(Input)
+    background: v(--input-bg)
+    border: 1px solid v(--input-border)

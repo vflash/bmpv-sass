@@ -1,0 +1,3 @@
+.Form--disabled .Form__Input {
+  opacity: 0.5;
+}

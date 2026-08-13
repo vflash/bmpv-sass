@@ -1,0 +1,11 @@
+.Card {
+  padding: 20px;
+}
+.Card .Card__Header {
+  font-size: 20px;
+  color: #666;
+}
+.Card .Card__Body {
+  font-size: 14px;
+  line-height: 1.5;
+}

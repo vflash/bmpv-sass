@@ -1,0 +1,9 @@
+.Card {
+  padding: var(--Card--spacing, 20px);
+}
+.Card .Card__Header {
+  font-size: var(--Card--font-size, 24px);
+}
+.Card .Card__Body {
+  font-size: var(--Card--font-size, 24px);
+}
